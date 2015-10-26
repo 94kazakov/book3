@@ -47,7 +47,6 @@ function getCandidateLocations(){
   return locations
 }
 
-
 //
 // Scoring Functions
 //
@@ -83,24 +82,65 @@ function has_at_least_ten_businesses_with_100_or_more_reviews_within_one_mile(lo
   return frequentlyReviewedBusinsses.length > 10
 }
 
-function has_some_feature_1(loc){
-  // TODO
-  return true
+function collegeOrUniversity(loc){
+  // get businesses that have either college or university within 2km
+  var nearbyBusinesses = _.filter(items, function(item){
+    var loc2 = _.pick(item, ['latitude', 'longitude'])
+    var d = geolib.getDistance(loc, loc2)
+    return geolib.convertUnit('mi', d) < 2
+  })
+
+  var hasACollegeOrUniversity = _.some(nearbyBusinesses, function(n){
+    return _.some(n['categories'], function(n){
+      return n.match(/Universities/)
+    })
+  })
+  return hasACollegeOrUniversity
 }
 
-function has_some_feature_2(loc){
-  // TODO
-  return false
+function serveAlcohol(loc){
+  // get businesses that have either college or university within 2km
+  var nearbyBusinesses = _.filter(items, function(item){
+    var loc2 = _.pick(item, ['latitude', 'longitude'])
+    var d = geolib.getDistance(loc, loc2)
+    return geolib.convertUnit('mi', d) < 2
+  })
+
+  var serveAlcohol = _.some(nearbyBusinesses, function(n){
+    return  n['attributes']['Alcohol'] != "none"
+  })
+  return serveAlcohol
 }
 
-function has_some_feature_3(loc){
-  // TODO
-  return true
+function trendyNearby(loc){
+  // get businesses that have either college or university within 2km
+  var nearbyBusinesses = _.filter(items, function(item){
+    var loc2 = _.pick(item, ['latitude', 'longitude'])
+    var d = geolib.getDistance(loc, loc2)
+    return geolib.convertUnit('mi', d) < 2
+  })
+
+  var trendy = _.some(nearbyBusinesses, function(n){
+    return n['attributes']['Ambience'] && n['attributes']['Ambience']['trendy'] == true
+  })
+  return trendy
 }
 
-function has_some_feature_4(loc){
-  // TODO
-  return false
+
+function barsNearby(loc){
+  // get businesses that have either college or university within 2km
+  var nearbyBusinesses = _.filter(items, function(item){
+    var loc2 = _.pick(item, ['latitude', 'longitude'])
+    var d = geolib.getDistance(loc, loc2)
+    return geolib.convertUnit('mi', d) < 2
+  })
+
+  var barsNearby = _.some(nearbyBusinesses, function(n){
+    return _.some(n['categories'], function(n){
+      return n.match(/[bB]ar/)
+    })
+  })
+  return barsNearby
 }
 // TODO: Add more scoring functions
 
@@ -204,10 +244,10 @@ function loadDataThenRunSolutions(){
 
       scoreAndVisualize(locs, has_at_least_one_mcdonald_within_one_mile, visualize_true_or_false)
       scoreAndVisualize(locs, has_at_least_ten_businesses_with_100_or_more_reviews_within_one_mile, visualize_true_or_false)
-      scoreAndVisualize(locs, has_some_feature_1, visualize_true_or_false)
-      scoreAndVisualize(locs, has_some_feature_2, visualize_true_or_false)
-      scoreAndVisualize(locs, has_some_feature_3, visualize_true_or_false)
-      scoreAndVisualize(locs, has_some_feature_4, visualize_true_or_false)
+      scoreAndVisualize(locs, collegeOrUniversity, visualize_true_or_false)
+      scoreAndVisualize(locs, serveAlcohol, visualize_true_or_false)
+      scoreAndVisualize(locs, trendyNearby, visualize_true_or_false)
+      scoreAndVisualize(locs, barsNearby, visualize_true_or_false)
 
    })
    .fail(function(err){

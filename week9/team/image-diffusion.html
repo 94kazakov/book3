@@ -79,31 +79,68 @@
 var items   // global scope (i.e., can be accessed in javascript console)
 
 function solution1(){
-    return 'TODO'
+    return _.uniq(items, 'Image Id Str').length
 }
 
 function solution2(){
-    return 'TODO'
+    return _.uniq(items, 'Original User Name').length
 }
 
 function solution3(){
-    return 'TODO'
+    return _.filter(items, function(n){
+        return (n['Image Id Str'] == 592674938273865700) && (n['Rt'] == "Retweet")
+    }).length
 }
 
 function solution4(){
-    return 'TODO'
+    return _.max(_.groupBy(_.filter(items, function(n){
+                                return (n['Rt'] == "Retweet")
+                            }), 
+                    function(n){
+                        return n['Image Id Str'] 
+                    }),
+                function(n){
+                    return n.length
+                })[0]["Image Id Str"]
 }
 
 function solution5(){
-    return 'TODO'
+    clean = _.filter(items, function(n){
+        return n['Rt'] != 'Retweet'
+    })
+    dates = _.pluck(clean, "* Tweet Created At")
+
+    return _.filter(dates, function(n){
+        return (n.split(' ')[0] == '4/26/15')
+    }).length
 }
 
 function solution6(){
-    return 'TODO'
+     var originals = _.chain(items).filter(function(tweet){
+        return tweet.Rt != 'Retweet' && tweet['* Tweet Created At'].match(/^4\/26/);
+    }).pluck('Image Id Str').value();
+    
+    var timesTweeted = _.chain(items).filter(function(tweet){
+        return tweet.Rt == 'Retweet' && _.contains(originals, tweet['Image Id Str']);
+    }).groupBy('Image Id Str').mapValues(function(g){
+        return g.length;
+    }).values().value();
+    
+    return _.max(timesTweeted)
 }
 
 function solution7(){
-    return 'TODO'
+      var originals = _.chain(items).filter(function(tweet){
+        return tweet.Rt != 'Retweet' && tweet['* Tweet Created At'].match(/^4\/26/);
+    }).pluck('Image Id Str').value();
+    
+    var timesTweeted = _.chain(items).filter(function(tweet){
+        return tweet.Rt == 'Retweet' && _.contains(originals, tweet['Image Id Str']);
+    }).groupBy('Image Id Str').mapValues(function(g){
+        return g.length;
+    }).values().value();
+    
+    return _.sum(timesTweeted)/timesTweeted.length
 }
 
 function solution8(){
