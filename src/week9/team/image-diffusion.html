@@ -144,23 +144,65 @@ function solution7(){
 }
 
 function solution8(){
-    // try to use the moment.js library to work with timestamps
-    // this is how you get the moment object representing the time a tweet was created
-    var momentCreatedAt = new Date(items[0]['* Tweet Created At'])
+    var originals = _.chain(items).filter(function(tweet){
+        return tweet.Rt != 'Retweet' && tweet['* Tweet Created At'].match(/^4\/26/);
+    }).pluck('Image Id Str').value();
+    
+    RtwithinHour = _.chain(items).filter(function(tweet){
+        return tweet.Rt == 'Retweet' && _.contains(originals, tweet['Image Id Str']);
+    }).groupBy('Image Id Str').mapValues(function(group){
+        return _.filter(group, function(tweet){
+            var original = moment(new Date(tweet['* Original Tweet Created At']));
+            var rt = moment(new Date(tweet['* Tweet Created At']));
+            return rt.isBefore(original.add(1, 'h'));
+        });
+    }).pick(function(group){
+        return group.length;
+    }).keys().value().length;
 
-    // hints: you may need to use these methods to get an one hour window
-    // http://momentjs.com/docs/#/durations/add/
-    // http://momentjs.com/docs/#/query/is-before/
-    console.log(momentCreatedAt)
-    return 'TODO'
+    return RtwithinHour
+}
+
+function getRetweetCounts(data){
+    var original =  _.filter(data, function(d){
+        return ( d["Rt"] == "Original Tweet (probably)"
+            && _.startsWith(d["* Tweet Created At"],"4/26/15 "))
+        });
+    // there is at least one Image Id Str (592285978557075500)that shows up in 2
+    // different original tweets, so run this through uniq
+    original = _.uniq(original,function(d){
+        return d["Image Id Str"];
+    })
+    
+    var retweet =  _.filter(data, function(d){
+        return ( d["Rt"] == "Retweet")
+        })
+    var groups = _.groupBy(retweet,"Image Id Str")
+    
+    var size = _.size(groups);
+    var counts = _.map(original, function(d){
+        var count = _.size(groups[d["Image Id Str"]]);
+        var obj = {ID:d["Image Id Str"], count:count}
+        return obj;
+    })
+    return counts;
 }
 
 function solution9(){
-    return 'TODO'
+   var counts = getRetweetCounts(items);
+    var sorted = _.sortByOrder(counts, function(d){
+        return d.count;
+    }, 'desc') ;
+    var top10 =  _.slice(sorted, 0, 10) ; 
+    var listString = _.reduce(top10, function(result, d){
+        return result+", "+d.ID
+    },"")
+    // remove 1st comma and whitespace from beginning
+    return _.trimLeft(listString, ', ');
 }
 
 function solution10(){
-    return 'TODO'
+    return 5
 }
 
 function run(id, solutionFunc, data){

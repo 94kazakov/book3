@@ -74,7 +74,7 @@ Our team came up with the following relevant questions for a new 24-hours diner
 1. Are there other 24 hours diners within 2km?
 2. Are there any 24-hour non restaurant businesses within 2km?
 3. Any clubs within 2 km?
-4. Any bars within 2km?
+*4. Any bars within 2km? - Denis
 5. Any music venues within 2km?
 6. Any movie theatres within 2km?
 7. Are there any 3 star or lower establishments within 2km?
@@ -82,12 +82,12 @@ Our team came up with the following relevant questions for a new 24-hours diner
 10. Any thrift stores within 2km?
 11. Dive bars, but no wine bars within 2km?
 12. Hospitals within 2km? 
-13. Are there "Colleges & Universities" within 2km? - Denis
+*13. Are there "Colleges & Universities" within 2km? - Denis
 14. Hotels within 2km?
-15. Any trendy/upscale restaurant within 2lm? - Denis
-16. Places that serve alcohol within 2km? - Denis
+*15. Any trendy/upscale restaurant within 2m? - Denis
+*16. Places that serve alcohol within 2km? - Denis
 17. Any laundromats within 2km?
-18. Any non casual attire within 2km?
+18. 
 19. Any elementary/high school within 2km?
 20. Any nightlife places nearby?
 
