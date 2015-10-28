@@ -86,36 +86,97 @@ function solution2(){
 
 function solution3(){
     var businessesInGilbert = _.filter(items, {city: 'Gilbert'})
-    // TODO: find McDonloads and compute the distance between the first two
-    return 'TODO'
+    var mcd = _.filter(businessesInGilbert, {name:"McDonald's"})
+    var m0 = {latitude: mcd[0].latitude, 
+                    longitude: mcd[0].longitude}
+    var m1 = {latitude: mcd[1].latitude, 
+                    longitude: mcd[1].longitude}   
+                       
+    return geolib.getDistance(m0,m1)/1000 + ' km'
 }
 
 function solution4(){
-    return 'TODO'
+    var businessesInGilbert = _.filter(items, {city: 'Phoenix'})
+    var mcd = _.filter(businessesInGilbert, {name:"McDonald's"})
+    var lat = _.sum(mcd, 'latitude')/mcd.length
+    var lon = _.sum(mcd, 'longitude')/mcd.length
+    return "latitude:" +  lat + ", longitude:" + lon
 }
 
 function solution5(){
-    return 'TODO'
+    var businessesInGilbert = _.filter(items, {city: 'Phoenix'})
+    var mcd = _.filter(businessesInGilbert, {name:"McDonald's"})
+    var stb = _.filter(businessesInGilbert, {name:"Starbucks"})
+
+    if (mcd.length > stb.length){
+        return "McDonald's"
+    }
+    else{
+        return "Starbucks"
+    }
 }
 
 function solution6(){
-    return 'TODO'
+    var businessesInGilbert = _.filter(items, {city: 'Phoenix'})
+    var stb = _.filter(businessesInGilbert, {name:"Starbucks"})
+
+    var poppingStb = _.max(stb, "review_count")
+    return 'latitude: ' + poppingStb.latitude + ', longitude: ' + poppingStb.longitude
 }
 
 function solution7(){
-    return 'TODO'
+    var businessesInGilbert = _.filter(items, {city: 'Phoenix'})
+    var stb = _.filter(businessesInGilbert, {name:"Starbucks"})
+
+    var poppingStb = _.max(stb, "review_count")
+    var mcd = _.filter(businessesInGilbert, {name:"McDonald's"})
+    var min =  _.min(mcd, function(m){
+        return geolib.getDistance(
+            {latitude: m.latitude, longitude: m.longitude},
+            {latitude: poppingStb.latitude, longitude: poppingStb.longitude})
+    })
+    return 'latitude: ' + min.latitude + ', longitude: ' + min.longitude
 }
 
 function solution8(){
-    return 'TODO'
+    var businessesInGilbert = _.filter(items, {city: 'Phoenix'})
+    var stb = _.filter(businessesInGilbert, {name:"Starbucks"})
+    var cofshops = _.filter(businessesInGilbert, function(n){
+        return _.some(n.categories, function(shop){
+            return shop.match(/offee/)
+        })
+    })
+    var poppingStb = _.max(stb, "review_count")
+    return _.filter(cofshops, function(m){
+        return geolib.getDistance(
+            {latitude: m.latitude, longitude: m.longitude},
+            {latitude: poppingStb.latitude, longitude: poppingStb.longitude})/1000 < 2
+    }).length
 }
 
 function solution9(){
-    return 'TODO'
+    var businessesInGilbert = _.filter(items, {city: 'Phoenix'})
+    var mcd = _.filter(businessesInGilbert, {name:"McDonald's"})
+
+    var north = _.max(mcd, "latitude")
+    var south = _.min(mcd, "latitude")
+    return 'north_latitude: ' + north.latitude + ', north_longitude: ' + north.longitude + '<br>south_latitude: ' + south.latitude + ', south_longitude: ' + south.longitude
 }
 
 function solution10(){
-    return 'TODO'
+    var businessesInGilbert = _.filter(items, {city: 'Phoenix'})
+    var mcd = _.filter(businessesInGilbert, {name:"McDonald's"})
+    var stb = _.filter(businessesInGilbert, {name:"Starbucks"})
+
+    var lonelyMcd = _.filter(mcd, function(m){
+        return _.filter(stb,function(s){
+            return geolib.getDistance(
+            {latitude: m.latitude, longitude: m.longitude},
+            {latitude: s.latitude, longitude: s.longitude})/1000 < 5
+        }).length == 0      
+    })
+
+    return _.pluck(lonelyMcd, 'full_address')
 }
 
 function run(id, solutionFunc, data){

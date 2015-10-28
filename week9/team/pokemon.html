@@ -58,13 +58,13 @@ function solution3(data){
 }
 
 function solution4(data){
-    return _.max(data, function(n){
-        n['Attack']
-    })["Name"]
+    return _.max(data, 'Attack').Name
 }
 
 function solution5(data){
-    return 'TODO'
+    return _.chain(data)
+              .filter(function(n){return n.Type == 'GRASS'})
+              .pluck("Name").value()
 }
 
 function run(id, solutionFunc, data){
