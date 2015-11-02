@@ -60,40 +60,127 @@ Our team chose to analyze candidate locations for a new 24-hours diner.
 
 The team members who contributed to this hackathon are:
 
-- (Name)
-- (Name)
-- (Name)
-- (Name)
-- (Name)
-- (Name)
+- Heather Witte
+- Denis Kazakov
+- Kari Santos
+- Fadhil Suhendi
+- Zach Lamb
 
 ### 20 Questions
 
-Our team came up with the following relevant questions for a new 24-hours diner
+Our team came up with the following relevant questions:
 
-1. Are there other 24 hours diners within 2km?
-2. Are there any 24-hour non restaurant businesses within 2km?
-3. Any clubs within 2 km?
-*4. Any bars within 2km? - Denis
-5. Any music venues within 2km?
-6. Any movie theatres within 2km?
-7. Are there any 3 star or lower establishments within 2km?
-9. Are there any low price (1star) establishments within 2km?
-10. Any thrift stores within 2km?
-11. Dive bars, but no wine bars within 2km?
-12. Hospitals within 2km? 
-*13. Are there "Colleges & Universities" within 2km? - Denis
-14. Hotels within 2km?
-*15. Any trendy/upscale restaurant within 2m? - Denis
-*16. Places that serve alcohol within 2km? - Denis
-17. Any laundromats within 2km?
-18. 
-19. Any elementary/high school within 2km?
-20. Any nightlife places nearby?
+<!---
+I'm not sure which questions are whose, so put your questions together in a group of 4, make sure the question numbering makes sense, and add yes no ansers to bottom below, and re-do the totals. Last person needs to write the conclusion!
+-->
+
+1. Are there any businesses that have the attribute "nightlife" within 1km? (Kari)
+
+You want to be near the night-life of the city, so that people will come at night. 
+
+2. Are there no wine bars within 2 kilometers? (Kari)
+
+Diners are divey, and not classy (like wine bars), so you want to be near similar establishments.
+
+3. Are there no restaurants that have the "Good For : latenight" within 1km? (Kari)
+
+You don't want to be that close to other restaurants that are known to be good for latenight. 
+
+4. Are there no juice bars within 1km?
+	
+People that go to juice bars don't go to diners!
+
+5. Are there any movie theaters within 2 kilometers? (no movie theaters)
+
+You want to be near the night-life of the city.
+
+6. Are there any 3-star -or-less establishments within 2 kilometers?
+
+You don’t want highly-rated competition nearby.
+
+7. Are there any colleges/universities within 2 kilometers?
+
+College students are up late at night.
+
+8. Are there hotels within 2 kilometers?
+
+People vising Phoenix from out of town may want something to eat when they arrive to/leave town late at night.
+
+9. Are there any thrift stores within 2 kilometers?
+
+	Thrift stores and diners go hand-in-hand.
+
+10. Are there any colleges/universities within 2 kilometers?
+
+	College students are up late at night.
+
+11. Are there dive bars and no wine bars within 2 kilometers?
+
+	Diners are divey, and not classy (like wine bars), so you want to be near similar establishments.
+
+12. Are there hospitals within 2 kilometers? (Heather) 
+
+	Hospitals are 24-hour operations; employees and people visiting sick loved-ones may want to eat chili cheese fries at 3 am.
+
+13. Are there hotels within 2 kilometers?
+
+	People vising Phoenix from out of town may want something to eat when they arrive to/leave town late at night.
+
+14. Are there retirement homes within 2 kilometers? (1 retirement)
+
+	The nostalgia of diners from the 50s will attract an older demographic.
+
+15. Are there trendy/upscale establishments within 2 kilometers?
+
+	Diners are not upscale, so you don't want to be located in an upscale neighborhood. 
+
+16. Are there establishments that serve alcohol within 2 kilometers?
+
+	After drinking, people may want to get something to eat.
+
+17. Is there any restaurants with 3 stars or less within 2 kilometers ? contributed by (Fadhil Suhendi)
+
+You don’t want highly-rated competition nearby.
+
+18. Are there any dry/cleaning or laundry businesses within 2 kilometers ? contributed by (Fadhil Suhendi)
+
+When people do their laundry late at night, they may get hungry
+
+19. Are there any religious organization within 2 kilometers ? contributed by (fadhil suhendi)
+
+There are many people who have late night prayer
+
+20. Are there any libraries within 2 kilometers ? contributed by (fadhil suhendi) 
+Some people might get hungry after studying
 
 
 ### Conclusion
 
-Our team collectively has implemented (N) scoring functions. Based on
-the scores, our team recommends location (1, 2, 3, 4, 5, or 6 from west to east),
-because it receives (m) out of (N) possible scores.
+Our team collectively has implemented 20 scoring functions. Based on
+the scores, our team recommends location (3,1,2,6,4,5 from west to east),
+because it receives (10) out of (12) possible scores.
+
+Question|Site 1|Site 2|Site 3|Site 4|Site 5|Site 6
+--------|------|------|------|------|------|------
+Q1|yes|yes|no|no|no|no
+Q2|no|no|no|yes|yes|yes
+Q3|no|no|yes|yes|yes|yes
+Q4|no|no|yes|yes|yes|yes
+Q5|no|no|yes|yes|yes|yes
+Q6|yes|yes|yes|no|no|no
+Q7|yes|yes|yes|no|no|no
+Q8|yes|yes|yes|yes|yes|yes
+Q9|no|no|no|no|no|no
+Q10|no|no|no|no|no|no
+Q11|no|no|no|no|no|no
+Q12|no|no|no|no|no|no
+Q13|no|no|no|no|no|no
+Q14|no|no|no|no|no|no
+Q15|no|no|no|no|no|no
+Q16|no|no|no|no|no|no
+Q17|yes|yes|yes|no|no|no
+Q18|yes|yes|yes|no|no|yes
+Q19|yes|yes|yes|yes|no|yes
+Q20|yes|yes|yes|yes|yes|yes
+TOTALS|8|8|10|7|6|8
+
