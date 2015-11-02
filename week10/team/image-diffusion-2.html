@@ -30,14 +30,14 @@
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">
-</head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.9.4/chartist.min.css"></head>
 <body>
 
   <div class="parallax-container">
     <div class="parallax">
       <img src="nepal.jpg">
       <h1 id="title">What are the patterns of image diffusion during the Nepal Earthquake?
-        <div class="authors">by Name1, Name2, Name3, Name4</div>
+        <div class="authors">by Kari Santos, Heather Witte, Zachary Lamb, Fadhil Suhendi, Denis Kazakov</div>
       </h1>
 
     </div>
@@ -48,34 +48,37 @@
       <div id="questions" class="collection with-header">
           <div class="collection-header">Questions</div>
           <section id="q1" class="question collection-item">
-              <h4>Does a user tweet in a language different from their account setting language? (contributed by Heather)</h4>
+              <h4>Does a user tweet in a language other than their default language? (contributed by Heather)</h4>
               <div class="answer"></div>
           </section>
 
           <section id="q2" class="question collection-item">
-              <h4>Does a user tweet in a language different from their default language? (contributed by ???)</h4>
+              <h4>What user's tweet got retweeted the most? (contributed by Zach)</h4>
               <div class="answer"></div>
           </section>
+          <section id="qKari" class="question collection-item">
+              <h4>For retweeted images, does the number of followers of the original tweeter have a direct effect on the number of retweets? (contributed by Kari)</h4>
+              <div class="answer"></div>
+              <div class="ct-chart ct-octave" id="chartKari"></div>
+              X axis = number of followers<br>
+              Y axis = retweet count<br>
+              It doesn't seem that the number of followers of the original tweeter has an effect on the number of retweets.
+          </section>
+
+          
 
           <section id="q3" class="question collection-item">
               <h4>What were average retweet ratios on each day?(assumption that as days pass on, people scroll twitter less => less retweets) (contributed by Denis)</h4>
               <div class="answer"></div>
           </section>
 
+
           <section id="q4" class="question collection-item">
-              <h4>question? (contributed by ???)</h4>
+              <h4>How many original tweet in location Kathmandu, Nepal? (Fadhil Suhendi)</h4>
               <div class="answer"></div>
           </section>
 
-          <section id="q5" class="question collection-item">
-              <h4>question? (contributed by ???)</h4>
-              <div class="answer"></div>
-          </section>
 
-          <section id="q6" class="question collection-item">
-              <h4>question? (contributed by ???)</h4>
-              <div class="answer"></div>
-          </section>
       </div>
 
   </div>
@@ -92,17 +95,18 @@
 
 # Discussion
 
-Discuss some findings
+The answers submitted here probably cause more additional questions to be raised than full answers. For instance, what causes a tweet with an image to be retweeted? Is it the "interest" of the image? It doesn't seem to correlate with the number of followers of the original tweeter, but what if you looked at the follower count of the retweeters? If a tweet is retweeted by someone with a large following at any time in the retweet path, perhaps that's what makes it go viral. Do tweets with comments in less popular languages have less of a chance of going viral?  What is the typical "lifecycle" of a tweet and are there common patterns? How quickly to tweets leave the location of a disaster?
 
-# Heading 2
+More tweet data over a longer duration and a second round of analysis would prove very interesting.
 
-Discuss some findings
+
 
     </div>
   </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.9.4/chartist.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js"></script>
@@ -110,48 +114,138 @@ Discuss some findings
 
 var items   // global scope (i.e., can be accessed in javascript console)
 
+function getRetweetCounts(data){
+    var original =  _.filter(data, function(d){
+        return ( d["Rt"] == "Original Tweet (probably)"
+            && _.startsWith(d["* Tweet Created At"],"4/26/15 "))
+        });
+
+
+    // there is at least one Image Id Str (592285978557075500)that shows up in 2
+    // different original tweets, so run this through uniq
+
+    original = _.uniq(original,function(d){
+        return d["Image Id Str"];
+    })
+
+    
+    var retweet =  _.filter(data, function(d){
+        return ( d["Rt"] == "Retweet")
+        })
+    var groups = _.groupBy(retweet,"Image Id Str")
+    
+    var size = _.size(groups);
+    var counts = _.map(original, function(d){
+        var count = _.size(groups[d["Image Id Str"]]);
+        var obj = {ID:d["Image Id Str"], count:count}
+        obj.followers = d["User Followers Count"];
+        return obj;
+    })
+    return counts;
+}
+
+function solutionKari(){
+    counts =  getRetweetCounts(items)
+    counts = _.sortBy(counts, "followers");
+    var noZero = _.filter(counts, function(d){
+      return d.count > 0;
+    })
+    // var noZero = counts;
+    countArr = _.pluck(noZero,"count");
+    followerArr = _.pluck(noZero,"followers")
+var options = {
+  showLine: false,
+  
+  axisX: {
+    // // scaleMinSpace: 100 not supported for x axis
+      labelInterpolationFnc: function(value, index) {
+        return index % 5 === 0 ? value : null;
+      }
+    //divisor: 8,
+    },
+  axisY:{
+    onlyInteger: true,
+    //scaleMinSpace: 100
+  }
+};
+
+    new Chartist.Line('#chartKari', {
+      labels: followerArr,
+      series: [countArr]
+    //labels: [1, 2, 3, 4],
+    //series: [[100, 120, 180, 200]]
+  }, options);
+
+    return ''
+}
 function solution1(){
-    return 'TODO'
+
+  var grouplang = _.groupBy(items, "Tweet Language")
+
+  var map = _.map(grouplang, function(v,k){
+        return {"language": k, "count": v.length}
+    })
+
+  return "From the dataset of " + items.length + " tweets, there were " + map[0].count + " tweets in " + map[0].language + " and " + map[1].count + " tweets in " + map[1].language + "."
 }
 
 function solution2(){
-    return 'TODO'
+    var allUsers = _.groupBy(items, 'Original User Name')
+    var sumOfTweets =_.mapValues(allUsers, function(d){
+    return d.length
+})
+    // console.log(sumOfTweets)
+  sorted = _.sortByOrder(_.pairs(sumOfTweets),function(d){return d[1]},'desc')
+  topTen = _.take(sorted,10)
+  result = _.object(topTen)
+  console.log(topTen)
+    return topTen
 }
+
 
 function solution3(){
     retweets = _.filter(items, function(n){
       return n.Rt == "Retweet"
     })
-
     retweetDates = _.groupBy(retweets, function(d){
       return d["* Tweet Created At"].match(/\/[0-9]*\//)
     })
-
     dates = _.groupBy(items, function(d){
       return d["* Tweet Created At"].match(/\/[0-9]*\//)
     })
-
     return _.map(retweetDates, function(group,key){
       return  key + ": " + group.length/dates[key].length  + ', <br>'
     })
-
-
-
     //* Tweet Created At -> each day, divide # of retweets by size of group
-
 }
 
 function solution4(){
-    return 'TODO'
+
+    // user location with the number of original tweets
+
+    var man = _.filter(items,function(n){
+      return n['User Location'] == "Kathmandu, Nepal"
+    })
+
+
+    var location = _.groupBy(man,function(n){
+      return n['User Location']
+    })
+
+    
+    var tweet = _.mapValues(location,function(n){
+      return _.filter(n,function(d){
+        return d['Rt'] == "Original Tweet (probably)" 
+      }).length
+
+    })
+
+    console.log(tweet)
+    
+    return "There are " + _.values(tweet) + " original tweets in Kathmandu, Nepal"
 }
 
-function solution5(){
-    return 'TODO'
-}
 
-function solution6(){
-    return 'TODO'
-}
 
 function run(id, solutionFunc, data){
     console.log('run solution for ' + id)
@@ -167,12 +261,11 @@ function loadDataThenRunSolutions(){
         console.log('number of items loaded:', items.length)
         console.log('first item', items[0])
 
+       run('#qKari', solutionKari, items)
        run('#q1', solution1, items)
        run('#q2', solution2, items)
        run('#q3', solution3, items)
        run('#q4', solution4, items)
-       run('#q5', solution5, items)
-       run('#q6', solution6, items)
      })
      .fail(function(err){
          console.error(err)
