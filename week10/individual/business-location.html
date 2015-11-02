@@ -38,12 +38,12 @@
 
 function getCandidateLocations(){
   var locations = []
-  locations.push({latitude: 33.45, longitude: -112.03})
-  locations.push({latitude: 33.45, longitude: -112.04})
-  locations.push({latitude: 33.45, longitude: -112.05})
-  locations.push({latitude: 33.45, longitude: -112.06})
-  locations.push({latitude: 33.45, longitude: -112.07})
-  locations.push({latitude: 33.45, longitude: -112.08})
+  locations.push({latitude: 33.456068000000002, longitude: -112.074225})
+  locations.push({latitude: 33.448465400000003, longitude: -112.07125739999999})
+  locations.push({latitude: 33.445034800000002, longitude: -112.0703479})
+  locations.push({latitude: 33.452603099999997, longitude: -112.06911940000001})
+  locations.push({latitude: 33.444801984944, longitude: -112.07211772210999})
+  locations.push({latitude: 33.465795800000002, longitude: -112.03552620000001})
   return locations
 }
 
@@ -52,29 +52,74 @@ function getCandidateLocations(){
 // Scoring Functions
 //
 
-function has_some_feature_1(loc){
-  // TODO
-  return true
+function foodNearby(loc){
+  var nearbyBusinesses = _.filter(items, function(item){
+    var loc2 = _.pick(item, ['latitude', 'longitude'])
+    var d = geolib.getDistance(loc, loc2)
+    return geolib.convertUnit('mi', d) < 1
+  })
+
+  var foodNearby = _.some(nearbyBusinesses, function(n){
+    return _.some(n['categories'], function(n){
+      return n.match(/[Ff]ood/)
+    })
+  })
+  return foodNearby
 }
 
-function has_some_feature_2(loc){
-  // TODO
-  return false
+function hostipalsNearby(loc){
+  // get businesses that have either college or university within 2km
+  var nearbyBusinesses = _.filter(items, function(item){
+    var loc2 = _.pick(item, ['latitude', 'longitude'])
+    var d = geolib.getDistance(loc, loc2)
+    return geolib.convertUnit('mi', d) < 4
+  })
+
+  var barsNearby = _.some(nearbyBusinesses, function(n){
+    return _.some(n['categories'], function(n){
+      return n.match(/ospital/)
+    })
+  })
+  return barsNearby
 }
 
-function has_some_feature_3(loc){
-  // TODO
-  return true
+function popularPlaces(loc){
+  var popular = _.filter(items, function(n){
+    return n['review_count'] > 30
+  })
+  return popular
 }
 
-function has_some_feature_4(loc){
-  // TODO
-  return false
+function barsNearby(loc){
+  // get businesses that have either college or university within 2km
+  var nearbyBusinesses = _.filter(items, function(item){
+    var loc2 = _.pick(item, ['latitude', 'longitude'])
+    var d = geolib.getDistance(loc, loc2)
+    return geolib.convertUnit('mi', d) < 2
+  })
+
+  var barsNearby = _.some(nearbyBusinesses, function(n){
+    return _.some(n['categories'], function(n){
+      return n.match(/[bB]ar/)
+    })
+  })
+  return barsNearby
 }
 
-function has_some_feature_5(loc){
-  // TODO
-  return false
+function collegeOrUniversity(loc){
+  // get businesses that have either college or university within 2km
+  var nearbyBusinesses = _.filter(items, function(item){
+    var loc2 = _.pick(item, ['latitude', 'longitude'])
+    var d = geolib.getDistance(loc, loc2)
+    return geolib.convertUnit('mi', d) < 2
+  })
+
+  var hasACollegeOrUniversity = _.some(nearbyBusinesses, function(n){
+    return _.some(n['categories'], function(n){
+      return n.match(/Universities/)
+    })
+  })
+  return hasACollegeOrUniversity
 }
 
 //
@@ -175,11 +220,11 @@ function loadDataThenRunSolutions(){
 
       console.log('scoring all candidate locations')
 
-      scoreAndVisualize(locs, has_some_feature_1, visualize_true_or_false)
-      scoreAndVisualize(locs, has_some_feature_2, visualize_true_or_false)
-      scoreAndVisualize(locs, has_some_feature_3, visualize_true_or_false)
-      scoreAndVisualize(locs, has_some_feature_4, visualize_true_or_false)
-      scoreAndVisualize(locs, has_some_feature_5, visualize_true_or_false)
+      scoreAndVisualize(locs, foodNearby, visualize_true_or_false)
+      scoreAndVisualize(locs, hostipalsNearby, visualize_true_or_false)
+      scoreAndVisualize(locs, popularPlaces, visualize_true_or_false)
+      scoreAndVisualize(locs, barsNearby, visualize_true_or_false)
+      scoreAndVisualize(locs, collegeOrUniversity, visualize_true_or_false)
 
    })
    .fail(function(err){
