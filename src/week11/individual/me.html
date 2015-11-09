@@ -57,7 +57,7 @@
   <script>
 
 // TODO: replace the FIREBAW_URL with your own
-var PERSONAL_FIREBASE_URL = 'https://doubleshow-bigdata-hci.firebaseio.com/'
+var PERSONAL_FIREBASE_URL = 'https://94kazakov-bigdata-hci.firebaseio.com/'
 
 // add the personal firebase url to the class's firebase
 
@@ -88,64 +88,118 @@ function analyze(events){
 
   ask(when_did_i_start_collecting, events)
   ask(how_many_emails_have_i_received_since, events)
-  ask(question1, events)
-  ask(question2, events)
-  ask(question3, events)
-  ask(question4, events)
-  ask(question5, events)
-  ask(question6, events)
-  ask(question7, events)
-  ask(question8, events)
-  ask(question9, events)
-  ask(question10, events)
+  ask(what_is_the_most_recent_email_theme, events)
+  ask(what_is_most_recent_calendar_event, events)
+  ask(how_many_calendar_events_total, events)
+  ask(earliest_calendar_event_start_date, events)
+  ask(do_I_have_more_calendar_or_gmail_entries, events)
+  ask(who_wrote_latest_gmail, events)
+  ask(last_hour_mail, events)
+  ask(most_frequent_author_from_yesterday, events)
+  ask(most_frequent_author_from_last_hour, events)
+  ask(most_frequent_author_from_last_week, events)
 }
 
 function when_did_i_start_collecting(events){
-  return 'I started collecting from [TODO: earliest timestamp].'
+  return 'I started collecting from ' +  _.toArray(events.gmail)[0].date
 }
 
 function how_many_emails_have_i_received_since(events){
   return 'I received ' + _.values(events.gmail).length + ' emails.'
 }
 
-function question1(events){
-  return 'I ...'
+function what_is_the_most_recent_email_theme(events){
+  var latest = _.max(events.gmail,function(d) {
+    var date = new Date(d.date)
+    return date
+  });
+  return 'The latest email subject was: '+ latest.subj;
 }
 
-function question2(events){
-  return 'I ...'
+function what_is_most_recent_calendar_event(events){
+  var latest = _.max(events.calendar,function(d) {
+    var date = new Date(d.created)
+    return date
+  });
+  return 'The latest calendar event was: '+ latest.name;
 }
 
-function question3(events){
-  return 'I ...'
+function how_many_calendar_events_total(events){
+  return "there are :" + _.values(events.calendar).length + "calendar events"
 }
 
-function question4(events){
-  return 'I ...'
+function earliest_calendar_event_start_date(events){
+  earliest = _.min(events.calendar, function(n){
+    var date = new Date(n.begins)
+    return date
+  })
+  return 'Earliest start date is:' + earliest.begins
 }
 
-function question5(events){
-  return 'I ...'
+function do_I_have_more_calendar_or_gmail_entries(events){
+  if (_.values(events.gmail).length > _.values(events.calendar).length){
+    return 'I have more gmail events'
+  }
+  else{
+    return 'I have more calendar events'
+  }
 }
 
-function question6(events){
-  return 'I ...'
+function who_wrote_latest_gmail(events){
+  var latest = _.max(events.gmail,function(d) {
+    var date = new Date(d.date)
+    return date
+  });
+  return 'The latest email author was: '+ latest.from;
 }
 
-function question7(events){
-  return 'I ...'
+function last_hour_mail(events){
+  var lastHour = _.filter(events.gmail,function(d) {
+    var time =  moment(d.date)
+    var oneHourAgo = moment().subtract(1,'hours')
+    return time.isAfter(oneHourAgo)
+  });
+  
+  return 'I received '+_.size(lastHour)+' emails in the past hour'
 }
 
-function question8(events){
-  return 'I ...'
+function most_frequent_author_from_yesterday(events){
+    var yesterday = _.filter(events.gmail, function(n){
+      var time = moment(n.date)
+      var yesterday = moment().subtract(24,'hours')
+      return time.isAfter(yesterday)
+    })
+
+    var name = _.max(_.groupBy(yesterday, 'from'), function(n){
+      return n.length
+    })
+    return name[0].from
 }
 
-function question9(events){
-  return 'I ...'
+function most_frequent_author_from_last_hour(events){
+  var yesterday = _.filter(events.gmail, function(n){
+      var time = moment(n.date)
+      var yesterday = moment().subtract(1,'hours')
+      return time.isAfter(yesterday)
+    })
+
+    var name = _.max(_.groupBy(yesterday, 'from'), function(n){
+      return n.length
+    })
+    return name[0].from
 }
 
-function question10(events){
-  return 'I ...'
+function most_frequent_author_from_last_week(events){
+  var yesterday = _.filter(events.gmail, function(n){
+      var time = moment(n.date)
+      var yesterday = moment().subtract(168,'hours')
+      return time.isAfter(yesterday)
+    })
+
+    var name = _.max(_.groupBy(yesterday, 'from'), function(n){
+      return n.length
+    })
+    return name[0].from
 }
 
 // initialize the parallax effect
