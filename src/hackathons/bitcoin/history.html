@@ -81,7 +81,7 @@ var bank = {
 // how many USD per bitcoin
 var price = null
 
-// sync with firebase's current tweet
+// load history data from the web
 $.ajax({url: 'https://big-data-hci-hackathon.firebaseapp.com/history.json'})
  .done(function(items){
 
