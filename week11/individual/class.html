@@ -121,16 +121,16 @@ function analyze(events){
 
   ask(how_many_individuals_analyzed_so_far, events)
   ask(whose_data_is_available, events)
-  ask(question1, events)
-  ask(question2, events)
-  ask(question3, events)
-  ask(question4, events)
-  ask(question5, events)
-  ask(question6, events)
-  ask(question7, events)
-  ask(question8, events)
-  ask(question9, events)
-  ask(question10, events)
+  ask(how_many_gmail_trackers, events)
+  ask(how_many_calendar_trackers, events)
+  ask(how_many_slack_trackers, events)
+  ask(who_has_how_many_trackers, events)
+  ask(what_is_the_most_number_of_trackers, events)
+  ask(how_many_have_no_trackers, events)
+  ask(who_has_the_most_trackers, events)
+  ask(how_many_facebook_trackers, events)
+  ask(who_has_the_most_gmail_messages, events)
+  ask(how_many_have_more_than_3_trackers, events)
 }
 
 function how_many_individuals_analyzed_so_far(events){
@@ -141,44 +141,78 @@ function whose_data_is_available(events){
   return _.keys(events).join(' , ')
 }
 
-function question1(events){
-  return '...'
+function how_many_gmail_trackers(events){
+  gmail = _.filter(events, function(n){
+    return _.contains(_.keys(n), "gmail")
+  })
+  return "there are:" + gmail.length + "trackers"
 }
 
-function question2(events){
-  return '...'
+function how_many_calendar_trackers(events){
+  gmail = _.filter(events, function(n){
+    return _.contains(_.keys(n), "calendar")
+  })
+  return "there are:" + gmail.length + "trackers"
 }
 
-function question3(events){
-  return '...'
+function how_many_slack_trackers(events){
+  gmail = _.filter(events, function(n){
+    return _.contains(_.keys(n), "slack")
+  })
+  return "there are:" + gmail.length + "trackers"
 }
 
-function question4(events){
-  return '...'
+function who_has_how_many_trackers(events){
+  return JSON.stringify(_.mapValues(events, function(user){
+    return _.size(_.keys(user))
+  }))
+
 }
 
-function question5(events){
-  return '...'
+function what_is_the_most_number_of_trackers(events){
+  return JSON.stringify(_.size(_.max(events, function(user){
+    return _.size(_.keys(user))
+  })))
 }
 
-function question6(events){
-  return '...'
+function how_many_have_no_trackers(events){
+  gmail = _.filter(events, function(n){
+    return _.size(_.keys(n)) == 0
+  })
+  return "there are:" + gmail.length + "that have no trackers"
 }
 
-function question7(events){
-  return '...'
+function how_many_facebook_trackers(events){
+  gmail = _.filter(events, function(n){
+    return _.contains(_.keys(n), "facebook")
+  })
+  return "there are:" + gmail.length + "trackers"
 }
 
-function question8(events){
-  return '...'
+function who_has_the_most_trackers(events){
+  var maxUser = _.invert(_.mapValues(events, function(user){
+    return _.size(_.keys(user))
+  }))
+  var countOfTrackers = _.max(_.keys(maxUser))
+  return maxUser[countOfTrackers]
 }
 
-function question9(events){
-  return '...'
+function who_has_the_most_gmail_messages(events){
+  var maxUser = _.invert(_.mapValues(events, function(user){
+    if (_.contains(_.keys(user), "gmail")){
+      return _.size(user.gmail)
+    }
+    else return 0
+  }))
+  var countOfTrackers = _.max(_.keys(maxUser))
+  return maxUser[countOfTrackers]
 }
 
-function question10(events){
-  return '...'
+function how_many_have_more_than_3_trackers(events){
+  gmail = _.filter(events, function(n){
+    return _.size(_.keys(n)) > 3
+  })
+  return "there are:" + gmail.length + "who have more than 3 trackers"
 }
 
 
