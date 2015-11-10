@@ -83,7 +83,12 @@ var firebase = new Firebase('https://big-data-hci-hackathon.firebaseio.com/')
 
 // how many USD per bitcoin
 var price = null
+var slider = []
+var el = {"tweet": '',
+          "price": 0.0  
+          }
 
+var words = {"apple":[3.5872766122766127,14],"google":[-0.25,7],"fun":[4.6569575432606864,108],"game":[-5.426682128260998,172],"news":[-3.378293314013128,22],"money":[3.939297582816749,48],"good":[4.137989927273125,218],"actor":[2.8765623265623272,14],"movies":[-3.7074799168839414,22],"tech":[0.4579300802446584,34],"music":[-2.632779140382229,37],"people":[-5.396610877414859,137]}
 // sync with firebase's current tweet
 firebase
   .child('bitcoin')
@@ -92,6 +97,7 @@ firebase
     // this function is invoked each time there's update on the value
     var tweet = snapshot.val()
     $('#tweet').html(tweet)
+    el.tweet = tweet
     process(tweet)
 })
 
@@ -103,13 +109,74 @@ firebase
     // this function is invoked each time there's update on the value
     price = snapshot.val()
     $('#price').html(price)
+    el.price = price
+    slider.push(el)
+    if (slider.length > 5){
+      slider = _.takeRight(slider, 5)
+    }
+    processBatch(slider)
 })
 
 function process(tweet){
-  if (decideWhetherOrNotToTrade(tweet)){
+  if (tradingQuestion(tweet)){
     trade()
   }
   showBankBalanceInUSD()
+}
+
+function tradingQuestion(tweet){
+  var sum = 0
+  if (tweet.match(/fun/i)) {
+    sum += words['fun'][0]
+  }
+  if (tweet.match(/google/i)) {
+    sum += words['google'][0]
+  }
+  if (tweet.match(/game/i)) {
+    sum += words['game'][0]
+  }
+  if (tweet.match(/news/i)) {
+    sum += words['news'][0]
+  }
+  if (tweet.match(/money/i)) {
+    sum += words['money'][0]
+  }
+  if (tweet.match(/good/i)) {
+    sum += words['good'][0]
+  }
+  if (tweet.match(/actor/i)) {
+    sum += words['actor'][0]
+  }
+  if (tweet.match(/movies/i)) {
+    sum += words['movies'][0]
+  }
+  if (tweet.match(/music/i)) {
+    sum += words['music'][0]
+  }
+  if (tweet.match(/people/i)) {
+    sum += words['people'][0]
+  }
+
+  if (sum > 0){
+    if (bank.currency === 'USD'){
+      return true
+    } else {
+      return false
+    }
+  } else if(sum < 0){
+    if (bank.currency === 'USD'){
+      return false
+    } else {
+      return true
+    }
+  } else{
+    return false
+  }
+}
+
+
+function processBatch(batch){
+  strength(batch)
 }
 
 function showBankBalanceInUSD(){

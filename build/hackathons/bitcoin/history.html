@@ -81,7 +81,7 @@ var bank = {
 // how many USD per bitcoin
 var price = null
 
-// sync with firebase's current tweet
+// load history data from the web
 $.ajax({url: 'https://big-data-hci-hackathon.firebaseapp.com/history.json'})
  .done(function(items){
 
@@ -89,11 +89,17 @@ $.ajax({url: 'https://big-data-hci-hackathon.firebaseapp.com/history.json'})
     console.log('first item:', items[0])
 
     setInterval(function(){
+      if (items.length < 5){
+        printWords()
+        return
+      }
+      var batch = _.takeRight(items, 5)
       var item = items.pop()
       price = item.price
       $('#tweet').html(item.tweet)
       $('#price').html(item.price)
-      process(tweet)
+      process(item.tweet)
+      processBatch(batch)
     }, 2)
 
  })
@@ -106,6 +112,10 @@ function process(tweet){
      trade()
    }
    showBankBalanceInUSD()
+ }
+
+function processBatch(batch){
+   strength(batch)
  }
 
 function showBankBalanceInUSD(){
