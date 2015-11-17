@@ -1,0 +1,11 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+var JSON;
+
+ $.getJSON('example.json', function(response){
+       JSON = response;
+       alert(JSON.property);
+ })
+console.log(JSON)
+</script>

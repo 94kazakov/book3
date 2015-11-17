@@ -148,43 +148,151 @@ function example(){
 }
 
 function func1(){
-  return '...'
+
+  var data = _.filter(items, function(n){
+                    return n.word == "data"
+                    })
+  return _.map(data, function(n){
+              return "decade: " + n.decade + " count: " + n.count + "<br>"
+          })
 }
 
 function func2(){
-  return '...'
+  var data = _.filter(items, function(n){
+                    return n.word == "oil"
+                    })
+  return JSON.stringify(_.max(data, function(n){
+              return n.count
+          })
+          )
 }
 
 function func3(){
-  return '...'
+  var data = _.filter(items, function(n){
+                    return n.word == "feminism"
+                    })
+  return JSON.stringify(_.min(data, function(n){
+              return n.count
+          }))
 }
 
 function func4(){
-  return '...'
+  var data = _.filter(items, function(n){
+                    return n.word == "communism"
+                    })
+  return _.map(data, function(n){
+              return "decade: " + n.decade + " count: " + n.count + "<br>"
+          })
 }
 
 function func5(){
-  return '...'
+  //word: [decades]
+  /*var data = _.groupBy(items, 'word')
+  var dates = _.mapValues(data, function(n){
+    return _.max(_.pluck(dates, 'decade'))
+  })
+  var filtered = _.filter(data, function(dates){
+              return _.max(_.pluck(dates, 'decade')) < 1930
+          })
+  return dates */
+
+  var all = _.unique(_.pluck(items, 'word'))
+  var modern = _.chain(all)
+      .filter(function(word){
+        return word.decade > 1960
+      }) 
+      .pluck('word')
+      .unique()
+      .value()
+  return _.difference(all, modern).join('<br>')
 }
 
 function func6(){
-  return '...'
+  var all = _.unique(_.pluck(items, 'word'))
+  var modern = _.chain(all)
+      .filter(function(word){
+        return word.decade <= 1960
+      }) 
+      .pluck('word')
+      .unique()
+      .value()
+  return _.difference(all, modern).join('<br>')
 }
 
 function func7(){
-  return '...'
+  var internet = ( _.filter(items, function(n){
+    return n.word == 'internet'
+  }))
+  var wordGroups = _.groupBy(items, function(n){
+    return n.word
+  })
+  var decade = _.filter(wordGroups, function(n){
+    return n[0].decade == _.first(internet).decade
+  })
+  //console.log(dec_count_match)
+  return _.map(decade, function(n){
+    return n[0].word + '<br>'})
 }
 
 function func8(){
-  return '...'
+  var gold = ( _.filter(items, function(n){
+    return n.word == 'gold'
+  }))
+
+  var oil = ( _.filter(items, function(n){
+    return n.word == 'oil'
+  }))
+
+  var decades = _.map(_.zip(oil, gold), function(word){
+    if (parseInt(word[0].rank) < parseInt(word[1].rank)) return parseInt(word[0].decade)
+    else return 0
+  })
+
+  return _.dropWhile(decades, function(n){
+    return n === 0
+  })[0]
 }
 
 function func9(){
-  return '...'
+  var words = _.groupBy(items, function(n){
+    return n.word
+  })
+  var drop = _.pairs(_.mapValues(words, function(n){
+    return _.first(n).rank - _.last(n).rank
+  }))
+  var sorted = _.sortBy(drop, function(n){
+    return n[1]
+  })
+  var slice = _.slice(sorted, 0, 20)
+  return _.map(slice, function(n){
+    return n[0] + '<br>'})
 }
 
 function func10(){
-  return '...'
+  var war = ( _.filter(items, function(n){
+    return n.word == 'war'
+  }))
+  war = _.sortBy(war, function(n){
+    return parseInt(n.decade)
+  })
+  console.log(war)
+  var words = _.groupBy(items, function(n){
+    return n.word
+  })
+  words = _.mapValues(words, function(n){
+    return _.sortBy(n, function(d){
+      return parseInt(d.decade)
+    })
+  })
+  var filter = _.filter(words, function(n){
+    return _.size(n) == war.length
+  })
+  filter = _.remove(filter, function(n){
+    return (war[0].rank + 10) > n[0].rank && n[0].rank > war[0].rank - 10 && (war[1].rank + 10) > n[1].rank && n[1].rank > war[1].rank - 10 && (war[2].rank + 10) > n[2].rank && n[2].rank > war[2].rank - 10 && (war[3].rank + 10) > n[3].rank && n[3].rank > war[3].rank - 10 && (war[4].rank + 10) > n[4].rank && n[4].rank > war[4].rank - 10 && (war[5].rank + 10) > n[5].rank && n[5].rank > war[5].rank - 10 && (war[6].rank + 10) > n[6].rank && n[6].rank > war[6].rank - 10 && (war[7].rank + 10) > n[7].rank && n[7].rank > war[7].rank - 10 && (war[8].rank + 10) > n[8].rank && n[8].rank > war[8].rank - 10 && (war[9].rank + 10) > n[9].rank && n[9].rank > war[9].rank - 10 && (war[10].rank + 10) > n[10].rank && n[10].rank > war[10].rank - 10
+  })
+  return _.map(filter, function(n){
+    return n[0].word + '<br>'})
+
 }
 
 // initialize the parallax effect
