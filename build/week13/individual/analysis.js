@@ -74,42 +74,81 @@ function example3(){
 }
 
 function func1(){
-  return '...'
+  //item[0] -> samples[1000]
+  return _.chain(items)
+    .map('Samples')
+    .flatten()
+    .filter(function(sample){
+      return  sample > 0
+    })
+    .uniq()
+    .value()
 }
 
 function func2(){
-  return '...'
+  return (items[334]['Ping time'] - items[0]['Ping time'])/355
 }
 
 function func3(){
-  return '...'
+  return _.chain(items)
+          .filter(function(item){
+            return item['Ping_time'] == '09:57:18'
+          })
+          .pluck('Samples')
+          .filter(function(sample){
+            return  sample == 7
+          })
+          .value().length
 }
 
 function func4(){
-  return '...'
+  var counts = _.chain(items)
+          .mapValues(function(item){
+            return _.filter(item.Samples, function(i){
+              return i == 3
+            }).length
+          })
+          .value()  
+  return items[_.last(_.pairs(_.invert(counts)))[1]]['Ping_time']
 }
 
 function func5(){
-  return '...'
+  return _.filter(items, function(item){
+      return _.every(item.Samples, function(i){
+                return i <= 0
+              })
+  }).length
 }
 
 function func6(){
-  return '...'
+  return _.chain(items)
+    .map('Samples')
+    .flatten()
+    .filter(function(d) { return d > 0 })
+    .groupBy()
+    .mapValues('length')
+    .pairs()
+    .max(function(d) { return d[1] })
+    .value()
 }
 
 function func7(){
-
   // this sample code shows how to display a map and put a marker to visualize
   // the location of the first item (i.e., measurement data)
   // you need to adapt this code to answer the question
-
-  var first = items[0]
-  var pos = [first.Latitude, first.Longitude]
+  var NYC = [40.7127, 74.0059]
   var el = $(this).find('.viz')[0]    // lookup the element that will hold the map
   $(el).height(500) // set the map to the desired height
-  var map = createMap(el, pos, 5)
 
-  var circle = L.circle(pos, 500, {
+  var longest = _.max(items, function(item){
+    var pos = [item.Latitude, item.Longitude]
+    var d = geolib.getDistance(NYC, pos)
+    return geolib.convertUnit('mi', d)
+  })
+
+  var map = createMap(el, [longest.Latitude, longest.Longitude], 5)
+
+  var circle = L.circle([longest.Latitude, longest.Longitude], 500, {
       color: 'red',
       fillColor: '#f03',
       fillOpacity: 0.5
@@ -118,21 +157,148 @@ function func7(){
 }
 
 function func8(){
+  var first = items[0]
+  var pos = [first.Latitude, first.Longitude]
+  var el = $(this).find('.viz')[0]    // lookup the element that will hold the map
+  $(el).height(500) // set the map to the desired height
+  var map = createMap(el, pos, 11)
+
+  _.each(items, function(item){
+    var pos = [item.Latitude, item.Longitude]
+    var circle = L.circle(pos, 20, {
+      color: 'red',
+      fillColor: '#f03',
+      fillOpacity: 0.5
+    }).addTo(map);
+  })
   return '...'
 }
 
 function func9(){
+  var common = _.chain(items)
+    .map('Samples')
+    .flatten()
+    .filter(function(d) { return d > 0 })
+    .groupBy()
+    .mapValues('length')
+    .pairs()
+    .max(function(d) { return d[1] })
+    .value()[0]
+
+  var first = items[0]
+  var pos = [first.Latitude, first.Longitude]
+  var el = $(this).find('.viz')[0]    // lookup the element that will hold the map
+  $(el).height(500) // set the map to the desired height
+  var map = createMap(el, pos, 11)
+
+  _.forEach(items, function(item){
+    if (_.includes(item.Samples, common)){
+      var pos = [item.Latitude, item.Longitude]
+      var circle = L.circle(pos, 20, {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.8
+      }).addTo(map);
+    }
+  })
   return '...'
+}
+
+/* accepts parameters
+ * h  Object = {h:x, s:y, v:z}
+ * OR 
+ * h, s, v
+*/
+function HSVtoRGB(h, s, v) {
+    var r, g, b, i, f, p, q, t;
+    if (arguments.length === 1) {
+        s = h.s, v = h.v, h = h.h;
+    }
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return "rgb(" + Math.round(r * 255) + ',' + Math.round(g * 255)  + ',' +  Math.round(b * 255) + ')'
 }
 
 function func10(){
-  return '...'
+  var first = items[0]
+  var pos = [first.Latitude, first.Longitude]
+  var el = $(this).find('.viz')[0]    // lookup the element that will hold the map
+  $(el).height(500) // set the map to the desired height
+  var map = createMap(el, pos, 11)
+
+  _.forEach(items, function(item){
+      var density = (_.sum(item.Samples, function(n){
+        if (n>0){
+          return n
+        }
+      }))/1000
+      if (density > 1) {density = 1}
+      var pos = [item.Latitude, item.Longitude]
+      var circle = L.circle(pos, 20, {
+        color: HSVtoRGB(0,density, 1),
+        fillColor: HSVtoRGB(0,density, 1),
+        fillOpacity: 0.5
+      }).addTo(map);
+  })
 }
 
+
 function func11(){
-  return '...'
+  var first = items[0]
+  var pos = [first.Latitude, first.Longitude]
+  var el = $(this).find('.viz')[0]    // lookup the element that will hold the map
+  $(el).height(500) // set the map to the desired height
+  var map = createMap(el, pos, 11)
+  var colors = ['']
+  _.forEach(items, function(item){
+      var density = (_.sum(item.Samples, function(n){
+        //only counting the big fish, not plankton
+        if (n > 0 && n < 10){
+          return n
+        }
+      }))/250
+      if (density > 1) {density = 1}
+      var pos = [item.Latitude, item.Longitude]
+      var circle = L.circle(pos, 20, {
+        color: HSVtoRGB(0,density, 1),
+        fillColor: HSVtoRGB(0,density, 1),
+        fillOpacity: 0.5
+      }).addTo(map);
+  })
 }
 
 function func12(){
-  return '...'
+  var first = items[0]
+  var pos = [first.Latitude, first.Longitude]
+  var el = $(this).find('.viz')[0]    // lookup the element that will hold the map
+  $(el).height(500) // set the map to the desired height
+  var map = createMap(el, pos, 11)
+  var colors = ['']
+  _.forEach(items, function(item){
+      var density = (_.sum(item.Samples, function(n){
+        //only counting the big fish, not plankton
+        if (n == 7 || n == 13){
+          return 1
+        }
+      }))/20
+      if (density > 1) {density = 1}
+      var pos = [item.Latitude, item.Longitude]
+      var circle = L.circle(pos, 20, {
+        color: HSVtoRGB(0,density, 1),
+        fillColor: HSVtoRGB(0,density, 1),
+        fillOpacity: 0.5
+      }).addTo(map);
+  })
 }
+
